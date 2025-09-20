@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Basic Calculator</title>
+    <style>
+      body {
+        background: #f0f2f5;
+        font-family: "Segoe UI", Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .calculator {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+        width: 320px;
+      }
+      .display {
+        width: 100%;
+        height: 60px;
+        background: #222;
+        color: #fff;
+        font-size: 2rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        text-align: right;
+        padding: 0.5rem 1rem;
+        box-sizing: border-box;
+        overflow-x: auto;
+      }
+      .buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.75rem;
+      }
+      button {
+        padding: 1rem;
+        font-size: 1.2rem;
+        border: none;
+        border-radius: 8px;
+        background: #e3e6ea;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      button:hover {
+        background: #d1d5db;
+      }
+      .operator {
+        background: #ffd166;
+      }
+      .operator:hover {
+        background: #ffb703;
+      }
+      .equal {
+        background: #06d6a0;
+        color: #fff;
+      }
+      .equal:hover {
+        background: #118ab2;
+      }
+      .clear {
+        background: #ef476f;
+        color: #fff;
+      }
+      .clear:hover {
+        background: #d90429;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="calculator">
+      <div id="display" class="display">0</div>
+      <div class="buttons">
+        <button class="clear" id="clear">C</button>
+        <button class="operator" data-value="/">÷</button>
+        <button class="operator" data-value="*">×</button>
+        <button class="operator" data-value="-">−</button>
+        <button data-value="7">7</button>
+        <button data-value="8">8</button>
+        <button data-value="9">9</button>
+        <button class="operator" data-value="+">+</button>
+        <button data-value="4">4</button>
+        <button data-value="5">5</button>
+        <button data-value="6">6</button>
+        <button class="equal" id="equal">=</button>
+        <button data-value="1">1</button>
+        <button data-value="2">2</button>
+        <button data-value="3">3</button>
+        <button data-value="0" style="grid-column: span 2">0</button>
+        <button data-value=".">.</button>
+      </div>
+    </div>
+    <script>
+      const display = document.getElementById("display");
+      let current = "";
+      let resetNext = false;
+
+      function updateDisplay(val) {
+        display.textContent = val || "0";
+      }
+
+      document.querySelectorAll(".buttons button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const value = btn.getAttribute("data-value");
+          if (btn.id === "clear") {
+            current = "";
+            updateDisplay(current);
+          } else if (btn.id === "equal") {
+            try {
+              current = eval(current).toString();
+              updateDisplay(current);
+              resetNext = true;
+            } catch {
+              updateDisplay("Error");
+              current = "";
+            }
+          } else {
+            if (resetNext) {
+              current = "";
+              resetNext = false;
+            }
+            current += value;
+            updateDisplay(current);
+          }
+        });
+      });
+
+      // Keyboard support
+      document.addEventListener("keydown", (e) => {
+        if (e.key.match(/[0-9+\-*/.]/)) {
+          if (resetNext) {
+            current = "";
+            resetNext = false;
+          }
+          current += e.key;
+          updateDisplay(current);
+        } else if (e.key === "Enter") {
+          try {
+            current = eval(current).toString();
+            updateDisplay(current);
+            resetNext = true;
+          } catch {
+            updateDisplay("Error");
+            current = "";
+          }
+        } else if (e.key === "Escape") {
+          current = "";
+          updateDisplay(current);
+        }
+      });
+    </script>
+  </body>
+</html>
